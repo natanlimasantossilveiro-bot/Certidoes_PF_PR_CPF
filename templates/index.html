@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Consulta CPF</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f8;
+      color: #1f2933;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+    }
+
+    main {
+      width: min(92vw, 520px);
+      background: #ffffff;
+      border: 1px solid #d7dde3;
+      border-radius: 8px;
+      padding: 28px;
+      box-shadow: 0 12px 30px rgba(31, 41, 51, 0.12);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0 0 22px;
+      line-height: 1.5;
+      color: #52606d;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 6px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #bcccdc;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    button,
+    a.button {
+      display: inline-block;
+      border: 0;
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 16px;
+      font-weight: 700;
+      background: #1f7a8c;
+      color: #ffffff;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    button.secondary {
+      background: #8a4b38;
+      margin-left: 8px;
+    }
+
+    .actions {
+      margin-top: 22px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .message {
+      margin: 0 0 20px;
+      border-radius: 6px;
+      padding: 12px;
+      background: #e7f4f6;
+      color: #174e59;
+      border: 1px solid #9bcbd3;
+    }
+
+    .message.erro {
+      background: #fdecea;
+      color: #7f1d1d;
+      border-color: #f4a7a0;
+    }
+
+    .message.sucesso {
+      background: #eaf7ef;
+      color: #1b5e34;
+      border-color: #9ed4b0;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Consulta CPF</h1>
+    <p>Preencha os dados, conclua a consulta no Chrome e salve o PDF.</p>
+
+    {% if mensagem %}
+      <div class="message {{ status }}">{{ mensagem }}</div>
+    {% endif %}
+
+    {% if status == "captcha" %}
+      <form method="post" action="/salvar">
+        <p>No Chrome, valide o CAPTCHA e clique em Consultar. Depois que o comprovante aparecer, clique abaixo.</p>
+        <div class="actions">
+          <button type="submit">Salvar PDF</button>
+        </div>
+      </form>
+      <form method="post" action="/status">
+        <div class="actions">
+          <button type="submit">Ver pagina atual</button>
+        </div>
+      </form>
+      <form method="post" action="/cancelar">
+        <div class="actions">
+          <button class="secondary" type="submit">Cancelar</button>
+        </div>
+      </form>
+    {% else %}
+      <form method="post" action="/iniciar">
+        <label for="cpf">CPF</label>
+        <input id="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00" required>
+
+        <label for="nascimento">Data de nascimento</label>
+        <input id="nascimento" name="nascimento" placeholder="DD/MM/AAAA" required>
+
+        <div class="actions">
+          <button type="submit">Abrir consulta</button>
+          {% if arquivo %}
+            <a class="button" href="/certidoes/{{ arquivo }}">Baixar PDF</a>
+          {% endif %}
+        </div>
+      </form>
+    {% endif %}
+  </main>
+</body>
+</html>
